@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def sum_squared_error(x_train, y_train, w, b):
     m = x_train.shape[0]
@@ -36,23 +37,30 @@ def main():
     
     itns = 10000
     alpha = 1e-2
-    epsilon = 1e-6
+    epsilon = 1e-3
+    error_history = []
 
     w, b = gradient_descent(x_train, y_train, np.zeros(x_train.shape[1]), 0, alpha)
-    sse_prev = sum_squared_error(x_train, y_train, w, b)
+    error_history.append(sum_squared_error(x_train, y_train, w, b))
 
     for i in range(itns):
         w, b = gradient_descent(x_train, y_train, w, b, alpha)
         sse = sum_squared_error(x_train, y_train, w, b)
-        sse_diff = abs(sse - sse_prev)
+        sse_diff = abs(sse - error_history[-1])
 
         if sse_diff < epsilon:
             break
         if i % 50 == 0:
             print(f"itn {i}:    y={w}x+{b}  sse={sse}")
-        sse_prev = sse
+        error_history.append(sse)
 
     print(f"multivariable linear regression eqn.: y={w}x+{b}")
+
+    plt.title("Learning Curve")
+    plt.xlabel("Iterations")
+    plt.ylabel("J(w,b)")
+    plt.plot(np.arange(len(error_history)) + 1, error_history)
+    plt.show()
 
 if __name__ == "__main__":
     main()
